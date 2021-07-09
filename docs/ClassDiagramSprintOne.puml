@@ -1,0 +1,216 @@
+@startuml
+title Class Diagram Sprint 1
+
+class FamilyService{
+- familyList
++ addFamily(name)
++ getFamiliesWithNoAdmin()
++ getFamilyById(idFamily)
++ getRelationshipTypesList()
++ getFamilyMembersListWithoutAdmin(familyId)
++ existsRelationship(familyId,personId)
++ createRelationship(familyId,personId,relationshipType)
+- getNextId
++ getFamilyRelationshipsList(familyId)
++ familyRelationshipsListToString(familyId)
+}
+
+class PersonService{
+- personList
+- familyService
+- createPerson(idPerson, name, ...)
++ addPerson(name, birthDate, ...)
++ addAdmin(name, birthDate, ...)
++ getPersonById(personId)
+- existsEmail()
++ addEmail
+- getNextId()
+}
+
+class FamilyCashAccount{
+- accountId
+- familyId
+- cashAmount
++ getAccountId()
++ getFamilyId()
+}
+
+class FamilyRelationship{
+- relationshipType
+- personId
++ checkIfRelationshipRefersToMember(personId)
++ getPersonId()
++ getFamilyRelationshipType()
++ equals()
+}
+
+enum FamilyRelationshipType{
+Spouse
+Partner
+Parent
+Child
+Sibling
+Grandparent
+Grandchild
+Uncle_Aunt
+Nephew_Niece
+Cousin
+- numericValue
++ valueOf(numericValue)
++ toString()
+}
+
+
+class Family {
+- familyId
+- name
+- registrationDate
+- administrator
+- personList
+- familyRelatioships
+- vatList
+- familyCategoryList
++ createFamily(name, registrationDate)
+- validate(name)
+- checkFormat(name)
++ getFamilyId()
++ addAdmin(person)
++ addMember(person)
++ hasAdministrator()
++ getPersonList()
++ getFamilyMembersList()
++ checkIfPersonExistsInFamily(personId)
++ getAdministrator()
++ getFamilyRelationshipsList()
++ addFamilyRelationship(relationship)
+- existsVat(vatNumber)
++ addCategory(category)
++ existsCategory(other)
++ getNextFamilyCategoryListId()
++ getFamilyCategoryList()
+}
+
+class Person {
+- personId
+- name
+- birthDate
+- emailAddressList
++ getPersonId()
++ getVat()
+- birthDateToString(birthDate)
+- parseDate(birthDate)
++ addEmail(emailAddress)
++ getPersonName()
++ getEmailAddressList()
+- validateName(name)
+- checkFormat(name)
++ toString()
++ equals()
+}
+
+class VAT {
+- number
++ createVAT()
+- validate(vatNumber)
+- checkFormat(vatNumber)
++ getVat()
++ toString()
+}
+
+class EmailAddress {
+- email
+- validate(email)
+- checkFormat(email)
++ toString()
++ equals(other)
++ hasCode()
+}
+
+class PhoneNumber {
+- number
++ createPhone()
+- validate(phoneNumber)
+- checkFormatphoneNumber)
++ toString()
+}
+
+class Address {
+- street
+- location
+- postalCode
+- validateStreet(street)
+- validatePostalCode(postalCode)
+- checkFormat(postalCode)
+- validateLocation(location)
++ toString()
+}
+
+
+class Category {
+- categoryId
+- name
+- parentId
+- isStandard
++ createStandardRootCategory(name,categoryId)
++ createStandardCategory(name,categoryId,parentId)
++ createRootCategory(name,categoryId)
++ createCategory(name,categoryId,parentId)
+- validate(name)
+- checkFormat(String name)
++ getParentId()
++ getCategoryId()
++ getCategoryName()
++ hasParent()
++ toString()
++ equals(other)
++ hasCode()
+}
+
+class CategoryService {
+- categoryList
+- familyService
++ addStandardCategory(name,parentName)
++ addStandardCategory(name)
++ addCategory(name, parentName)
++ addCategory(name)
+- existsCategory(other)
++ getSize()
++ getCategoryById(categoryId)
++ getStandardCategoryTree()
+- appendChildCategories(unorderedList,parentCategoryId,orderedList)
++ getStandardCategoryTreeToString()
+- getLevel(category)
++ getCategoryByName(name)
++ getNextId()
++ getNextFamilyId(familyService)
++ addFamilyCategory(familyService,name)
++ addFamilyCategory(familyService,name,parentName)
++ getFamilyCategoryTree(familyService)
++ getMergedFamilyCategoryTree(familyService)
+- mergeFamilyCategoryAndStandardCategoryTree(familyService)
++ getFamilyCategoryByName(familyService,name)
+}
+
+class FamilyCashAccountService{
+- familyCashAccountList
++ existsFamilyCashAccount(familyCashAccountList, newFamilyCashAccount)
++ getNextId()
+}
+
+CategoryService . FamilyService : knows
+FamilyService . PersonService : knows
+CategoryService "1" *-- "0..*" Category : contains
+FamilyService "1" *-- "0..*" Family : contains
+PersonService "1" *-- "0..*" Person : contains
+Person "0..1" -d- "1" FamilyRelationship : fromFamilyAdmin
+Family "0..1" -- "0..*" FamilyRelationship : exists
+FamilyRelationship "1" - "1" FamilyRelationshipType : isOfType
+Family .- FamilyCashAccountService : knows
+FamilyCashAccount "0..*" -* "1" FamilyCashAccountService : < contains
+PersonService -[hidden] VAT
+Person "1" -u- "1" VAT : has ^
+Person "1" - "0..*" PhoneNumber : has
+Person "1" -l "1" Address : > has
+VAT -[hidden] EmailAddress
+Person "1" -u- "0..*" EmailAddress : has ^
+@enduml

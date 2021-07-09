@@ -1,0 +1,275 @@
+@startuml
+title Class Diagram Sprint 2
+
+class Family {
+- familyId: UUID
+- name: String
+- registrationDate: Date
+- administrator: Person
+- personList: List<Person>
+- familyRelationships: List<FamilyRelationship>
+- vatList: List<Vat>
+- familyCategoryList: List<Category>
++ addCategory(category)
++ existsCategory(category)
++ getRelationBetweenMembers(mainUserId, otherUserId)
++ getChildrenList()
+}
+
+class FamilyService {
+- familyList : List<Family>
++ getFamilyById()
++ getChildrenList()
++ getListOfChildrenOwners()
++ existsRelationship(familyId, mainUserId, otherUserId)
+}
+
+class Person {
+ - personId
+ - name
+ - birthDate
+ - emailAddressList
+ - address
+ - phoneNumber
+ - VAT
+}
+
+class PersonService {
+- personList
++ getPersonById()
+}
+
+class PersonalCashAccount {
+- setDefaultDesignation()
+}
+
+interface Transferable {
+transferTo(movementAmount, destinationAccount)
+hasSameCurrency(destinationAccount)
+transferFrom(movementAmount, originAccount)
+getCurrency()
+getDesignation()
+}
+
+interface Payable {
+pay()
+}
+
+class BankAccount {
+# creditInitialBalance(initialBalance)
+}
+
+class BankSavingsAccount {
+- issuer : String
++ getIssuer()
+- setDesignation(designation)
+- checkIssuer(issuer)
+}
+
+class CreditCardAccount {
+- issuer : String
+- cardToken : String
+- creditLimit : MonetaryValue
+- interestRate : BigDecimal
+- checkCreditLimit(creditLimit)
++ setDesignation(designation)
+- checkIssuer(issuer)
+- checkToken(cardToken)
+- checkInterestRate(interestRate)
++ setInterest(interestRate)
+}
+
+class FamilyCashAccount {
+- setDefaultDesignation()
+}
+
+class AccountOwner {
+- type : T
+- name : String
++ getType()
++ getName()
+}
+
+interface AccountOwnable {
+getOwnerName()
+}
+
+class Category{
+- categoryId: UUID
+- name: String
+- parentId: UUID
+- isStandard: boolean
++ createCustomCategory(name)
++ createCustomCategory(name, parentName)
+- validate(name)
+- checkFormat(name)
+}
+
+class CategoryService {
+- categoryList: List<Category>
+- familyService: FamilyService
++ addFamilyCategory(name)
++ addFamilyCategory(name, parentName)
+- existsCategory(other)
+}
+
+abstract class Transaction {
+# transactionId : UUID
+# timestamp : Date
+# amount : MonetaryValue
+# postBalance : MonetaryValue
+# description : String
+# category : category
+# customTimestamp : Date
++ setCustomTimestamp()
++ getDescription()
++ setDescription()
++ getCategory()
++ setCategory()
++ getTimeStamp()
++ getAmount()
++ getPostBalance()
+}
+
+class TransactionService {
+- accountService : AccountService
++ getAccountMovementsBetweenTwoDates(accountId, startDate, endDate)
+- moveAmountBetweenAccounts(originAccount, destinationAccount, movementAmount)
++ transferFamilyCashToMember(family, familyMemberAccountOwnerDTO, currency, value)
++ registerPaymentCashAccount(person, entityDescription, currency, value, paymentDateString)
++ transferMyCashToMember(familyMember, familyMemberAccountOwnerDTO, currency, value)
+}
+
+class Payment {
+- entityDescription : String
++ setDescription()
+}
+
+class Transfer {
+- otherTransfer : Transfer
+- otherAccountOwner : String
++ setDescription()
++ setOtherTransaction(otherTransfer)
++ setOtherAccountOwner(otherAccountOwner)
+}
+
+class MonetaryValue {
+- decimalScale : int
+- value : BigDecimal
+- currency : Currency
++ createMonetaryValue(currencyString, doubleValue)
++ sum(valueToBeAdded)
++ plus(valueToBeAdded)
++ minus(valueToBeSubtracted)
++ invert()
++ isSameCurrency(other)
++ isPositive()
++ isNegative()
++ isZero()
+- validateState()
+- setScale()
+- getDecimalsForCurrency()
++ valueOf()
++ getCurrency()
+}
+
+abstract class Account {
+# accountId : UUID
+# accountOwner : AccountOwner
+# currency : Currency
+# transactionList : List<Transaction>
+# designation : String
++ getAccountId()
++ getBalance()
+# creditInitialBalance(initialBalance)
+# credit(creditAmount)
+# debit(debitAmount)
+# debit(debitAmount, description, paymentDate)
+# verifyDebitAmount(debitAmount)
+# verifyPositiveAmount(value)
++ getTransactionList()
++ getDesignation()
++ getAccountOwner()
++ hasOwner(owner)
+}
+
+class AccountService {
+- accountList : List <Account>
++ createFamilyCashAccount(family, amount, currency)
+- existsCashAccount(account)
++ createPersonalCashAccount(person, amount, currency)
++ createCreditCardAccount(person, issuer, currency, creditLimit, cardToken, designation)
++ getAccountById(accountId)
++ getCashAccountByOwner(owner)
+# hasCashAccount(owner)
++ getCashAccountBalance(accountOwnerDTO)
++ getListOfCashAccountOwnersDTOUsingMapper(family)
++ getListOfOnlyAccountOwnersDTO(family)
++ createBankAccount(person, amount, currency, designation)
++ createBankSavingsAccount(person, amount, currency, issuer, designation)
+- isCashAccount(account)
++ getChildrenAccountListDTO(childrenList)
++ getListOfAccountsOfThisOwner(person)
+- hasAccount(owner)
++ getAccountBalance(accountDTO)
++ getAccountDesignation(designation)
+}
+
+class FamilyRelationship {
+- relationshipType : FamilyRelationshipType
+- mainUserId : UUID
+- otherUserId : UUID
++ getMainUserId()
++ getPersonId()
++ getFamilyRelationshipType()
++ setFamilyRelationshipType(relationshipType)
++ isParent(parentId)
+}
+
+Enum FamilyRelationshipType {
+- numericValue
++ valueOf(numericValue)
++ getNumericValue()
+}
+
+Account <|-u- FamilyCashAccount
+Account <|-u- PersonalCashAccount
+Account <|-u- BankAccount
+Account <|-u- BankSavingsAccount
+Account <|-u- CreditCardAccount
+
+Transaction --* FamilyCashAccount: has list of <
+Transaction --* PersonalCashAccount: has list of <
+Transaction --* CreditCardAccount: has list of <
+Transaction --* BankAccount: has list of <
+Transaction --* BankSavingsAccount: has list of <
+
+AccountOwner .down.|> AccountOwnable
+AccountOwnable <|.left. Family
+AccountOwnable <|.right. Person
+
+Category "0..*" - "1..*" Family : has FamilyCategories
+Category "0..*" --* "1" CategoryService : contains
+
+Transaction "0..*" - "1" TransactionService : contains
+
+Payable <|-[dashed]- PersonalCashAccount
+Transferable <|-[dashed]- PersonalCashAccount
+Transferable <|-[dashed]- FamilyCashAccount
+
+Family "0..*" -up-* "1" FamilyService : contains
+Person "0..*" -* "1" PersonService : contains
+Account "0..*" -* "1" AccountService : contains
+
+Transaction <|-u- Payment
+Transaction <|-u- Transfer
+
+MonetaryValue -* Transaction::amount
+Account "1..*" -- "1" AccountOwner
+Family -[hidden] Person
+
+Family "1" -- "0..*" FamilyRelationship : has
+Person "2" -- "0..*" FamilyRelationship : between
+FamilyRelationship "1" - "1" FamilyRelationshipType : isOfType
+AccountOwnable -[hidden] FamilyRelationship
+@enduml

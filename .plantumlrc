@@ -1,0 +1,8 @@
+skinparam backgroundColor transparent
+'skinparam shadowing false
+skinparam Dpi 150
+center footer
+    'Generated at %date("dd/MM/yyyy' at 'HH:mm")
+    'Generated at %date("dd/MM/yyyy")
+    Group One | SWitCH 2020/21
+end footer

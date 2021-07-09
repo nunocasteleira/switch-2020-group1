@@ -1,0 +1,75 @@
+@startuml
+title Domain Model Sprint 1
+hide methods
+
+class Family {
+  - familyId
+  - name
+  - registrationDate
+  - administrator
+  - personList
+  - familyRelationships
+  - vatList
+  - familyCategoryList
+}
+
+Family "1" - "0..*" FamilyRelationship : has
+
+class FamilyRelationship{
+ - personId
+ - relationshipType
+}
+
+class Person {
+ - personId
+ - name
+ - birthDate
+ - emailAddressList
+
+}
+
+FamilyRelationship "1" - "1" Person : with Family Admin
+
+class VAT {
+ - vatNumber
+}
+
+class Email {
+ - emailAddress
+}
+
+class PhoneNumber {
+- phoneNumber
+}
+
+class Address {
+ - street
+ - postalCode
+ - location
+}
+
+
+Family "1" -- "0..1" FamilyCashAccount : has
+
+class FamilyCashAccount {
+  - accountId
+  - familyId
+  - cashAmount
+}
+
+class Category {
+ - categoryId
+  - name
+  - parentId
+  - isStandard
+}
+
+Person "1" - "1" VAT : has
+Person "1" - "0..*" Email : has
+Person "1" - "0..*" PhoneNumber : has
+Person "1" - "1" Address : has
+VAT --[hidden] Email
+VAT --[hidden] PhoneNumber
+FamilyRelationship --[hidden] Address
+Family "0..*" -u- "0..*" Category : has FamilyCategories
+@enduml

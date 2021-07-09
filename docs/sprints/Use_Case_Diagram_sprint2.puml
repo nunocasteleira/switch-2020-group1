@@ -1,0 +1,38 @@
+@startuml
+
+:Parent: as parent
+:Family Member: as famMem
+:Family Administrator: as famAdmin
+
+(US006 To Change a relation between two members) as (US006)
+(US111 To Add a Category to Family Category's Tree) as (US111)
+(US130 To Transfer Family Cash to Member) as (US130)
+(US135 To Check Balance of Family or Member Cash Account) as (US135)
+(US170 To Create a Personal Cash Account) as (US170)
+(US171 To Add a Bank Account) as (US171)
+(US172 To Add a Bank Savings Account) as (US172)
+(US173 To Add a Credit Card Account) as (US173)
+(US180 To Transfer My Cash to other Family Member) as (US180)
+(US181 To Register a Payment Made from my Personal Cash Account) as (US181)
+(US185 To Check the Balance of an Account) as (US185)
+(US186 To Get the List of Movements Between Dates) as (US186)
+(US188 To Check Balance of a Child's Cash Account) as (US188)
+
+left to right direction
+famAdmin --> (US006)
+famAdmin --> (US111)
+famAdmin --> (US130)
+famAdmin --> (US135)
+
+famMem --> (US170)
+famMem --> (US171)
+famMem --> (US172)
+famMem --> (US173)
+famMem --> (US180)
+famMem --> (US181)
+famMem --> (US185)
+famMem --> (US186)
+
+parent --> (US188)
+
+@enduml

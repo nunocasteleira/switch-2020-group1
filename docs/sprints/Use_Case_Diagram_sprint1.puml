@@ -1,0 +1,34 @@
+@startuml
+
+:Family Member: as famMem
+:Family Administrator: as famAdmin
+:System Manager: as sysMan
+
+(US001 To Create a Standard Category) as (US001)
+(US002 To Consult the Standard Categories Tree) as (US002)
+(US010 To Create a Family) as (US010)
+(US011 To Add a Family Administrator) as (US011)
+(US101 To Add Family Members) as (US101)
+(US104 To List Family Members and Their Relations) as (US104)
+(US105 To Create a Relation Between Two Family Members) as (US105)
+(US110 To List Family Categories Tree) as (US110)
+(US120 To Create a Family Cash Account) as (US120)
+(US150 To Consult My Profile) as (US150)
+(US151 To Add an Email Account To My Profile) as (US151)
+
+left to right direction
+sysMan --> (US001)
+sysMan --> (US002)
+sysMan --> (US010)
+sysMan --> (US011)
+
+famAdmin --> (US101)
+famAdmin --> (US104)
+famAdmin --> (US105)
+famAdmin --> (US110)
+famAdmin --> (US120)
+
+famMem --> (US150)
+famMem --> (US151)
+
+@enduml

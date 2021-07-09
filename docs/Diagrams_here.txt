@@ -1,0 +1,2 @@
+Place diagrams under this folder, except the sequence diagrams of the controllers, which must be with the correspondent controller class.
+Diagrams must be made with PlantUML.

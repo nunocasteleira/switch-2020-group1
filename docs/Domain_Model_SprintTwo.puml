@@ -1,0 +1,113 @@
+
+@startuml
+title Domain Model Sprint 2
+hide methods
+
+class Family {
+  - familyId
+  - name
+  - registrationDate
+  - administrator
+  - personList
+  - familyRelationships
+  - vatList
+  - familyCategoryList
+}
+
+Family "1" - "0..*" FamilyRelationship : has
+
+class FamilyRelationship{
+ - personId
+ - relationshipType
+}
+
+class Person {
+ - personId
+ - name
+ - birthDate
+ - emailAddressList
+ - Address
+ - phoneNumber
+ - VAT
+}
+
+FamilyRelationship "0..*" - "2" Person : between
+
+
+class PersonalCashAccount {
+  - accountId
+  - accountOwner
+  - designation
+}
+
+class BankAccount {
+  - accountId
+  - accountOwner
+  - designation
+}
+class BankSavingsAccount {
+  - accountId
+  - accountOwner
+  - designation
+}
+class CreditCardAccount {
+  - issuer
+  - cardToken
+  - creditLimit
+  - interestRate
+}
+class FamilyCashAccount {
+   - accountId
+   - accountOwner
+   - designation
+ }
+
+Transaction -- FamilyCashAccount: has list of <
+Transaction -- PersonalCashAccount: has list of <
+Transaction -- CreditCardAccount: has list of <
+Transaction -- BankAccount: has list of <
+Transaction -- BankSavingsAccount: has list of <
+
+FamilyCashAccount "0..1" -- "1" Family : has
+PersonalCashAccount "0..1" -- "1" Person : has
+BankAccount "0..*" -- "1" Person : has
+BankSavingsAccount "0..*" -- "1" Person : has
+CreditCardAccount "0..*" -- "1" Person : has
+
+class Category {
+ - categoryId
+  - name
+  - parentId
+  - isStandard
+}
+
+Family "0..*" -- "0..*" Category : has FamilyCategories
+
+abstract class Transaction {
+    - transactionId
+    - description
+    - category
+    - timestamp
+    - customTimestamp
+    - amount
+    - postBalance
+}
+
+class Payment {
+    - entityDescription
+}
+
+class Transfer {
+- otherTransfer
+- otherAccountOwner
+}
+
+class MonetaryValue {
+- value
+- currency
+}
+
+Transaction <|-u- Payment
+Transaction <|-u- Transfer
+MonetaryValue -* Transaction::amount
+@enduml
